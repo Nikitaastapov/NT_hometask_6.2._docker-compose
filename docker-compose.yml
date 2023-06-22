@@ -1,0 +1,25 @@
+version: "3.3"
+volumes:
+  pgdata:
+
+services:
+  
+  server:
+    build: nginx/
+    ports:
+      - "1234:1234"
+  
+  postgresdb:
+    image: postgres:latest
+    ports:
+      - "5555:5432"
+    restart: unless-stopped
+    volumes:
+      - .:logs:/var/lod
+      - pgdata:/var/lib/postgresql/data
+  web:
+    build: ./stocks_products
+    command: gunicorn stocks_products.wsgi:application --bind 0.0.0.0:8000
+    ports:
+      - '8000:6090'
+    
